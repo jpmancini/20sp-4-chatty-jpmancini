@@ -54,7 +54,7 @@ public class ClientHandler extends Thread{
 				}
 				else if( command.equals("/dm") && inputs[1] != null) {
 					String directMessage = "";
-					for( int i = 1; i < inputs.length; i++) {
+					for( int i = 2; i < inputs.length; i++) {
 						directMessage += ( inputs[i] + " " );
 					}
 					messageOne( inputs[1], directMessage ); 
@@ -93,25 +93,22 @@ public class ClientHandler extends Thread{
 		this.username = username;
 	} //setUsername
 	
-	public void messageOne(String target, String message) {
-		boolean found = false;
-		boolean online = false;
+	public void messageOne(String dmName, String message) {
+		boolean sent = false;
 		
 		for( ClientHandler clientHandler : serverHandler.getClientList() ) {
-			if( clientHandler.getUsername().equals( target ) ) {
-				online = clientHandler.isAlive();
-				found = true;
-				
-				if( found && online ) { 
+			if( clientHandler.getUsername().equals( dmName ) ) {			
+				if( clientHandler.isAlive() ) { 
 					String dm = "[DM]<" + username + ">: " + message;
 					clientHandler.message( dm );
-					//clientWriter.println("Message sent to " + target);
-					return;
+					sent = true;
 				}
 			}
 		} // for
 		
-		clientWriter.println( "User not found" ); 
+		if( !sent ) {
+			clientWriter.println( "User not found" ); 
+		}
 	} // messageOne
 	
 } //clientHandler
